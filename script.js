@@ -441,46 +441,97 @@ class Windows95Desktop {
     openCalculator() {
         const content = `
             <div class="calculator-content">
-                <input type="text" class="calculator-display" value="0" readonly>
-                <div class="calculator-buttons">
-                    <button class="calculator-button" data-action="clear">C</button>
-                    <button class="calculator-button" data-action="clear-entry">CE</button>
-                    <button class="calculator-button" data-action="backspace">←</button>
-                    <button class="calculator-button" data-action="divide">÷</button>
-                    <button class="calculator-button" data-number="7">7</button>
-                    <button class="calculator-button" data-number="8">8</button>
-                    <button class="calculator-button" data-number="9">9</button>
-                    <button class="calculator-button" data-action="multiply">×</button>
-                    <button class="calculator-button" data-number="4">4</button>
-                    <button class="calculator-button" data-number="5">5</button>
-                    <button class="calculator-button" data-number="6">6</button>
-                    <button class="calculator-button" data-action="subtract">-</button>
-                    <button class="calculator-button" data-number="1">1</button>
-                    <button class="calculator-button" data-number="2">2</button>
-                    <button class="calculator-button" data-number="3">3</button>
-                    <button class="calculator-button" data-action="add">+</button>
-                    <button class="calculator-button" data-number="0" style="grid-column: span 2;">0</button>
-                    <button class="calculator-button" data-action="decimal">.</button>
-                    <button class="calculator-button" data-action="equals">=</button>
+                <div class="calculator-menu">
+                    <span class="calculator-menu-item">查看</span>
+                    <span class="calculator-menu-item">编辑</span>
+                    <span class="calculator-menu-item">帮助</span>
+                </div>
+                <div class="calculator-display-container">
+                    <div class="calculator-memory-indicator" id="memory-indicator" style="display: none;">M</div>
+                    <input type="text" class="calculator-display" value="0" readonly>
+                </div>
+                <div class="calculator-mode-tabs">
+                    <div class="calculator-tab active" data-mode="standard">标准型</div>
+                    <div class="calculator-tab" data-mode="scientific">科学型</div>
+                </div>
+                <div class="calculator-buttons" id="calculator-buttons-container">
+                    <!-- 标准模式按钮 -->
+                    <button class="calculator-button memory" data-action="memory-clear">MC</button>
+                    <button class="calculator-button memory" data-action="memory-recall">MR</button>
+                    <button class="calculator-button memory" data-action="memory-store">MS</button>
+                    <button class="calculator-button memory" data-action="memory-add">M+</button>
+                    <button class="calculator-button memory" data-action="memory-subtract">M-</button>
+                    
+                    <button class="calculator-button operator" data-action="backspace">←</button>
+                    <button class="calculator-button operator" data-action="clear-entry">CE</button>
+                    <button class="calculator-button operator" data-action="clear">C</button>
+                    <button class="calculator-button operator" data-action="sign">±</button>
+                    <button class="calculator-button operator" data-action="sqrt">√</button>
+                    
+                    <button class="calculator-button number" data-number="7">7</button>
+                    <button class="calculator-button number" data-number="8">8</button>
+                    <button class="calculator-button number" data-number="9">9</button>
+                    <button class="calculator-button operator" data-action="divide">÷</button>
+                    <button class="calculator-button operator" data-action="percent">%</button>
+                    
+                    <button class="calculator-button number" data-number="4">4</button>
+                    <button class="calculator-button number" data-number="5">5</button>
+                    <button class="calculator-button number" data-number="6">6</button>
+                    <button class="calculator-button operator" data-action="multiply">×</button>
+                    <button class="calculator-button operator" data-action="reciprocal">1/x</button>
+                    
+                    <button class="calculator-button number" data-number="1">1</button>
+                    <button class="calculator-button number" data-number="2">2</button>
+                    <button class="calculator-button number" data-number="3">3</button>
+                    <button class="calculator-button operator" data-action="subtract">-</button>
+                    <button class="calculator-button equals" data-action="equals" style="grid-row: span 2;">=</button>
+                    
+                    <button class="calculator-button number" data-number="0" style="grid-column: span 2;">0</button>
+                    <button class="calculator-button number" data-action="decimal">.</button>
+                    <button class="calculator-button operator" data-action="add">+</button>
                 </div>
             </div>
         `;
         
-        const window = this.createWindow('计算器', content, 200, 260, '🧮');
-        this.setupCalculator(window);
+        const window = this.createWindow('计算器', content, 260, 340, '🧮');
+        this.setupEnhancedCalculator(window);
     }
 
-    setupCalculator(window) {
+    setupEnhancedCalculator(window) {
         const display = window.querySelector('.calculator-display');
-        const buttons = window.querySelectorAll('.calculator-button');
+        const buttonsContainer = window.querySelector('#calculator-buttons-container');
+        const memoryIndicator = window.querySelector('#memory-indicator');
+        const tabs = window.querySelectorAll('.calculator-tab');
+        const menuItems = window.querySelectorAll('.calculator-menu-item');
         
         let currentValue = '0';
         let previousValue = null;
         let operation = null;
         let waitingForNewNumber = false;
+        let memory = 0;
+        let isScientificMode = false;
+        let lastOperation = null;
+        let lastOperand = null;
         
-        const updateDisplay = () => {
-            display.value = currentValue;
+        const updateDisplay = (value = currentValue) => {
+            // 限制显示位数
+            if (value.length > 12) {
+                if (value.includes('e')) {
+                    display.value = parseFloat(value).toExponential(5);
+                } else {
+                    display.value = parseFloat(value).toPrecision(6);
+                }
+            } else {
+                display.value = value;
+            }
+        };
+        
+        const updateMemoryIndicator = () => {
+            if (memory !== 0) {
+                memoryIndicator.style.display = 'block';
+            } else {
+                memoryIndicator.style.display = 'none';
+            }
         };
         
         const inputNumber = (num) => {
@@ -488,7 +539,11 @@ class Windows95Desktop {
                 currentValue = num;
                 waitingForNewNumber = false;
             } else {
-                currentValue = currentValue === '0' ? num : currentValue + num;
+                if (currentValue === '0' && num !== '.') {
+                    currentValue = num;
+                } else {
+                    currentValue += num;
+                }
             }
             updateDisplay();
         };
@@ -498,7 +553,7 @@ class Windows95Desktop {
             
             if (previousValue === null) {
                 previousValue = inputValue;
-            } else if (operation) {
+            } else if (operation && !waitingForNewNumber) {
                 const result = calculate();
                 currentValue = String(result);
                 previousValue = result;
@@ -507,6 +562,8 @@ class Windows95Desktop {
             
             waitingForNewNumber = true;
             operation = nextOperation;
+            lastOperation = nextOperation;
+            lastOperand = inputValue;
         };
         
         const calculate = () => {
@@ -517,7 +574,12 @@ class Windows95Desktop {
                 case 'add': return prev + current;
                 case 'subtract': return prev - current;
                 case 'multiply': return prev * current;
-                case 'divide': return current !== 0 ? prev / current : 0;
+                case 'divide': 
+                    if (current === 0) {
+                        this.playErrorSound();
+                        return 0;
+                    }
+                    return prev / current;
                 default: return current;
             }
         };
@@ -530,52 +592,455 @@ class Windows95Desktop {
                 operation = null;
                 waitingForNewNumber = true;
                 updateDisplay();
+            } else if (lastOperation && lastOperand !== null) {
+                // 重复最后一次操作
+                previousValue = parseFloat(currentValue);
+                operation = lastOperation;
+                currentValue = String(lastOperand);
+                const result = calculate();
+                currentValue = String(result);
+                previousValue = null;
+                operation = null;
+                waitingForNewNumber = true;
+                updateDisplay();
             }
         };
         
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                const number = button.getAttribute('data-number');
-                const action = button.getAttribute('data-action');
-                
-                if (number) {
-                    inputNumber(number);
-                } else if (action) {
-                    switch (action) {
-                        case 'clear':
-                            currentValue = '0';
-                            previousValue = null;
-                            operation = null;
-                            waitingForNewNumber = false;
-                            updateDisplay();
-                            break;
-                        case 'clear-entry':
-                            currentValue = '0';
-                            updateDisplay();
-                            break;
-                        case 'backspace':
-                            if (currentValue.length > 1) {
-                                currentValue = currentValue.slice(0, -1);
-                            } else {
-                                currentValue = '0';
-                            }
-                            updateDisplay();
-                            break;
-                        case 'decimal':
-                            if (currentValue.indexOf('.') === -1) {
-                                currentValue += '.';
-                                updateDisplay();
-                            }
-                            break;
-                        case 'equals':
-                            performCalculation();
-                            break;
-                        default:
-                            inputOperation(action);
+        const performFunction = (func) => {
+            const value = parseFloat(currentValue);
+            let result = 0;
+            
+            switch (func) {
+                case 'sqrt':
+                    if (value < 0) {
+                        this.playErrorSound();
+                        return;
                     }
+                    result = Math.sqrt(value);
+                    break;
+                case 'reciprocal':
+                    if (value === 0) {
+                        this.playErrorSound();
+                        return;
+                    }
+                    result = 1 / value;
+                    break;
+                case 'percent':
+                    result = value / 100;
+                    break;
+                case 'sign':
+                    result = -value;
+                    break;
+                case 'sin':
+                    result = Math.sin(value * Math.PI / 180);
+                    break;
+                case 'cos':
+                    result = Math.cos(value * Math.PI / 180);
+                    break;
+                case 'tan':
+                    result = Math.tan(value * Math.PI / 180);
+                    break;
+                case 'log':
+                    if (value <= 0) {
+                        this.playErrorSound();
+                        return;
+                    }
+                    result = Math.log10(value);
+                    break;
+                case 'ln':
+                    if (value <= 0) {
+                        this.playErrorSound();
+                        return;
+                    }
+                    result = Math.log(value);
+                    break;
+                case 'x2':
+                    result = value * value;
+                    break;
+                case 'x3':
+                    result = value * value * value;
+                    break;
+                case 'xy':
+                    inputOperation('power');
+                    return;
+                case 'pi':
+                    result = Math.PI;
+                    break;
+                case 'e':
+                    result = Math.E;
+                    break;
+                default:
+                    return;
+            }
+            
+            currentValue = String(result);
+            waitingForNewNumber = true;
+            updateDisplay();
+        };
+        
+        const handleMemoryOperation = (action) => {
+            const value = parseFloat(currentValue);
+            
+            switch (action) {
+                case 'memory-clear':
+                    memory = 0;
+                    break;
+                case 'memory-recall':
+                    currentValue = String(memory);
+                    waitingForNewNumber = true;
+                    updateDisplay();
+                    break;
+                case 'memory-store':
+                    memory = value;
+                    break;
+                case 'memory-add':
+                    memory += value;
+                    break;
+                case 'memory-subtract':
+                    memory -= value;
+                    break;
+            }
+            
+            updateMemoryIndicator();
+        };
+        
+        const switchMode = (mode) => {
+            tabs.forEach(tab => tab.classList.remove('active'));
+            window.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+            
+            isScientificMode = mode === 'scientific';
+            
+            if (isScientificMode) {
+                buttonsContainer.classList.add('scientific');
+                buttonsContainer.innerHTML = `
+                    <!-- 科学计算器按钮布局 -->
+                    <button class="calculator-button scientific-func" data-action="sin">sin</button>
+                    <button class="calculator-button scientific-func" data-action="cos">cos</button>
+                    <button class="calculator-button scientific-func" data-action="tan">tan</button>
+                    <button class="calculator-button scientific-func" data-action="log">log</button>
+                    <button class="calculator-button scientific-func" data-action="ln">ln</button>
+                    <button class="calculator-button operator" data-action="clear">C</button>
+                    
+                    <button class="calculator-button memory" data-action="memory-clear">MC</button>
+                    <button class="calculator-button memory" data-action="memory-recall">MR</button>
+                    <button class="calculator-button memory" data-action="memory-store">MS</button>
+                    <button class="calculator-button memory" data-action="memory-add">M+</button>
+                    <button class="calculator-button memory" data-action="memory-subtract">M-</button>
+                    <button class="calculator-button operator" data-action="backspace">←</button>
+                    
+                    <button class="calculator-button scientific-func" data-action="x2">x²</button>
+                    <button class="calculator-button scientific-func" data-action="x3">x³</button>
+                    <button class="calculator-button scientific-func" data-action="xy">xʸ</button>
+                    <button class="calculator-button scientific-func" data-action="reciprocal">1/x</button>
+                    <button class="calculator-button scientific-func" data-action="sqrt">√</button>
+                    <button class="calculator-button operator" data-action="divide">÷</button>
+                    
+                    <button class="calculator-button scientific-func" data-action="pi">π</button>
+                    <button class="calculator-button scientific-func" data-action="e">e</button>
+                    <button class="calculator-button number" data-number="7">7</button>
+                    <button class="calculator-button number" data-number="8">8</button>
+                    <button class="calculator-button number" data-number="9">9</button>
+                    <button class="calculator-button operator" data-action="multiply">×</button>
+                    
+                    <button class="calculator-button operator" data-action="percent">%</button>
+                    <button class="calculator-button operator" data-action="sign">±</button>
+                    <button class="calculator-button number" data-number="4">4</button>
+                    <button class="calculator-button number" data-number="5">5</button>
+                    <button class="calculator-button number" data-number="6">6</button>
+                    <button class="calculator-button operator" data-action="subtract">-</button>
+                    
+                    <button class="calculator-button operator" data-action="clear-entry">CE</button>
+                    <button class="calculator-button number" data-number="0">0</button>
+                    <button class="calculator-button number" data-number="1">1</button>
+                    <button class="calculator-button number" data-number="2">2</button>
+                    <button class="calculator-button number" data-number="3">3</button>
+                    <button class="calculator-button operator" data-action="add">+</button>
+                    
+                    <button class="calculator-button number" data-action="decimal">.</button>
+                    <button class="calculator-button equals" data-action="equals" style="grid-column: span 5;">=</button>
+                `;
+            } else {
+                buttonsContainer.classList.remove('scientific');
+                buttonsContainer.innerHTML = `
+                    <!-- 标准模式按钮 -->
+                    <button class="calculator-button memory" data-action="memory-clear">MC</button>
+                    <button class="calculator-button memory" data-action="memory-recall">MR</button>
+                    <button class="calculator-button memory" data-action="memory-store">MS</button>
+                    <button class="calculator-button memory" data-action="memory-add">M+</button>
+                    <button class="calculator-button memory" data-action="memory-subtract">M-</button>
+                    
+                    <button class="calculator-button operator" data-action="backspace">←</button>
+                    <button class="calculator-button operator" data-action="clear-entry">CE</button>
+                    <button class="calculator-button operator" data-action="clear">C</button>
+                    <button class="calculator-button operator" data-action="sign">±</button>
+                    <button class="calculator-button operator" data-action="sqrt">√</button>
+                    
+                    <button class="calculator-button number" data-number="7">7</button>
+                    <button class="calculator-button number" data-number="8">8</button>
+                    <button class="calculator-button number" data-number="9">9</button>
+                    <button class="calculator-button operator" data-action="divide">÷</button>
+                    <button class="calculator-button operator" data-action="percent">%</button>
+                    
+                    <button class="calculator-button number" data-number="4">4</button>
+                    <button class="calculator-button number" data-number="5">5</button>
+                    <button class="calculator-button number" data-number="6">6</button>
+                    <button class="calculator-button operator" data-action="multiply">×</button>
+                    <button class="calculator-button operator" data-action="reciprocal">1/x</button>
+                    
+                    <button class="calculator-button number" data-number="1">1</button>
+                    <button class="calculator-button number" data-number="2">2</button>
+                    <button class="calculator-button number" data-number="3">3</button>
+                    <button class="calculator-button operator" data-action="subtract">-</button>
+                    <button class="calculator-button equals" data-action="equals" style="grid-row: span 2;">=</button>
+                    
+                    <button class="calculator-button number" data-number="0" style="grid-column: span 2;">0</button>
+                    <button class="calculator-button number" data-action="decimal">.</button>
+                    <button class="calculator-button operator" data-action="add">+</button>
+                `;
+            }
+            
+            setupButtonEvents();
+        };
+        
+        const setupButtonEvents = () => {
+            const buttons = buttonsContainer.querySelectorAll('.calculator-button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    this.playClickSound();
+                    const number = button.getAttribute('data-number');
+                    const action = button.getAttribute('data-action');
+                    
+                    if (number) {
+                        inputNumber(number);
+                    } else if (action) {
+                        switch (action) {
+                            case 'clear':
+                                currentValue = '0';
+                                previousValue = null;
+                                operation = null;
+                                waitingForNewNumber = false;
+                                lastOperation = null;
+                                lastOperand = null;
+                                updateDisplay();
+                                break;
+                            case 'clear-entry':
+                                currentValue = '0';
+                                updateDisplay();
+                                break;
+                            case 'backspace':
+                                if (currentValue.length > 1) {
+                                    currentValue = currentValue.slice(0, -1);
+                                } else {
+                                    currentValue = '0';
+                                }
+                                updateDisplay();
+                                break;
+                            case 'decimal':
+                                if (currentValue.indexOf('.') === -1) {
+                                    if (waitingForNewNumber) {
+                                        currentValue = '0.';
+                                        waitingForNewNumber = false;
+                                    } else {
+                                        currentValue += '.';
+                                    }
+                                    updateDisplay();
+                                }
+                                break;
+                            case 'equals':
+                                performCalculation();
+                                break;
+                            case 'add':
+                            case 'subtract':
+                            case 'multiply':
+                            case 'divide':
+                                inputOperation(action);
+                                break;
+                            case 'sqrt':
+                            case 'reciprocal':
+                            case 'percent':
+                            case 'sign':
+                            case 'sin':
+                            case 'cos':
+                            case 'tan':
+                            case 'log':
+                            case 'ln':
+                            case 'x2':
+                            case 'x3':
+                            case 'xy':
+                            case 'pi':
+                            case 'e':
+                                performFunction(action);
+                                break;
+                            case 'memory-clear':
+                            case 'memory-recall':
+                            case 'memory-store':
+                            case 'memory-add':
+                            case 'memory-subtract':
+                                handleMemoryOperation(action);
+                                break;
+                        }
+                    }
+                });
+            });
+        };
+        
+        // 键盘输入支持
+        const handleKeyPress = (event) => {
+            event.preventDefault();
+            const key = event.key;
+            
+            if (/[0-9]/.test(key)) {
+                inputNumber(key);
+            } else {
+                switch (key) {
+                    case '+':
+                        inputOperation('add');
+                        break;
+                    case '-':
+                        inputOperation('subtract');
+                        break;
+                    case '*':
+                        inputOperation('multiply');
+                        break;
+                    case '/':
+                        inputOperation('divide');
+                        break;
+                    case '=':
+                    case 'Enter':
+                        performCalculation();
+                        break;
+                    case '.':
+                        if (currentValue.indexOf('.') === -1) {
+                            if (waitingForNewNumber) {
+                                currentValue = '0.';
+                                waitingForNewNumber = false;
+                            } else {
+                                currentValue += '.';
+                            }
+                            updateDisplay();
+                        }
+                        break;
+                    case 'Backspace':
+                        if (currentValue.length > 1) {
+                            currentValue = currentValue.slice(0, -1);
+                        } else {
+                            currentValue = '0';
+                        }
+                        updateDisplay();
+                        break;
+                    case 'Escape':
+                    case 'Delete':
+                        currentValue = '0';
+                        previousValue = null;
+                        operation = null;
+                        waitingForNewNumber = false;
+                        updateDisplay();
+                        break;
+                    case '%':
+                        performFunction('percent');
+                        break;
+                }
+            }
+            
+            this.playClickSound();
+        };
+        
+        // 事件监听器
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const mode = tab.getAttribute('data-mode');
+                switchMode(mode);
+            });
+        });
+        
+        // 菜单功能
+        menuItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                switch (index) {
+                    case 0: // 查看
+                        // 切换科学/标准模式
+                        switchMode(isScientificMode ? 'standard' : 'scientific');
+                        break;
+                    case 1: // 编辑
+                        // 复制当前值到剪贴板
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(currentValue);
+                        }
+                        break;
+                    case 2: // 帮助
+                        this.showCalculatorHelp();
+                        break;
                 }
             });
         });
+        
+        // 窗口获得焦点时启用键盘输入
+        window.addEventListener('click', () => {
+            window.focus();
+        });
+        
+        window.addEventListener('keydown', handleKeyPress);
+        
+        // 初始化
+        setupButtonEvents();
+        updateMemoryIndicator();
+        
+        // 窗口关闭时移除键盘监听
+        const originalClose = window.querySelector('[data-action="close"]');
+        if (originalClose) {
+            originalClose.addEventListener('click', () => {
+                window.removeEventListener('keydown', handleKeyPress);
+            });
+        }
+    }
+    
+    showCalculatorHelp() {
+        const content = `
+            <div style="padding: 16px; font-size: 11px;">
+                <h3 style="margin-top: 0;">计算器帮助</h3>
+                <div style="margin-bottom: 12px;">
+                    <strong>基本操作:</strong><br>
+                    • 数字键: 输入数字<br>
+                    • +, -, ×, ÷: 基本运算<br>
+                    • =: 计算结果<br>
+                    • C: 清除所有<br>
+                    • CE: 清除输入<br>
+                    • ←: 退格
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong>内存功能:</strong><br>
+                    • MC: 清除内存<br>
+                    • MR: 读取内存<br>
+                    • MS: 存储到内存<br>
+                    • M+: 内存加法<br>
+                    • M-: 内存减法
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong>科学函数:</strong><br>
+                    • √: 平方根<br>
+                    • x²: 平方<br>
+                    • 1/x: 倒数<br>
+                    • %: 百分比<br>
+                    • ±: 正负号
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong>键盘快捷键:</strong><br>
+                    • 数字键: 0-9<br>
+                    • 运算符: +, -, *, /<br>
+                    • 回车: 等于<br>
+                    • 退格: 删除<br>
+                    • ESC: 清除全部
+                </div>
+                <div style="text-align: center; margin-top: 16px;">
+                    <button class="calculator-button" onclick="this.closest('.window').querySelector('[data-action=close]').click()">
+                        确定
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        this.createWindow('计算器帮助', content, 320, 380, '❓');
     }
 
     openPaint() {
