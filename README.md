@@ -18,12 +18,12 @@
 
 ## 🚀 在线体验
 
-[🖱️ 点击这里体验在线演示](https://your-username.github.io/windows95-desktop-simulator/)
+[🖱️ 点击这里体验在线演示](https://duanjh108.github.io/windows95-desktop-simulator/)
 
 或者直接下载代码本地运行：
 
 ```bash
-git clone https://github.com/your-username/windows95-desktop-simulator.git
+git clone https://github.com/duanjh108/windows95-desktop-simulator.git
 cd windows95-desktop-simulator
 # 直接在浏览器中打开 index.html 或使用本地服务器
 python -m http.server 8000  # Python 3
@@ -272,9 +272,9 @@ SOFTWARE.
 
 ## 📞 联系方式
 
-- 项目主页：[GitHub Repository](https://github.com/your-username/windows95-desktop-simulator)
-- 问题反馈：[Issues](https://github.com/your-username/windows95-desktop-simulator/issues)
-- 功能请求：[Feature Requests](https://github.com/your-username/windows95-desktop-simulator/issues/new?template=feature_request.md)
+- 项目主页：[GitHub Repository](https://github.com/duanjh108/windows95-desktop-simulator)
+- 问题反馈：[Issues](https://github.com/duanjh108/windows95-desktop-simulator/issues)
+- 功能请求：[Feature Requests](https://github.com/duanjh108/windows95-desktop-simulator/issues/new?template=feature_request.md)
 
 ---
 

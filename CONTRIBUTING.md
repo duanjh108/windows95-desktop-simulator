@@ -5,7 +5,7 @@
 ## 🤝 贡献方式
 
 ### 报告问题
-- 使用 [GitHub Issues](https://github.com/your-username/windows95-desktop-simulator/issues) 报告bugs
+- 使用 [GitHub Issues](https://github.com/duanjh108/windows95-desktop-simulator/issues) 报告bugs
 - 请提供详细的问题描述和复现步骤
 - 包含浏览器版本和操作系统信息
 
@@ -111,8 +111,8 @@ windows95-desktop-simulator/
 
 ## ❓ 获得帮助
 
-- 加入讨论：[GitHub Discussions](https://github.com/your-username/windows95-desktop-simulator/discussions)
-- 查看已有问题：[GitHub Issues](https://github.com/your-username/windows95-desktop-simulator/issues)
+- 加入讨论：[GitHub Discussions](https://github.com/duanjh108/windows95-desktop-simulator/discussions)
+- 查看已有问题：[GitHub Issues](https://github.com/duanjh108/windows95-desktop-simulator/issues)
 - 邮件联系：[your-email@example.com]
 
 ## 📄 许可证
