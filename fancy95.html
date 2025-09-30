@@ -1,0 +1,29 @@
+<!-- Fancy Windows 95-style Form -->
+<div class="win95-window" style="width:350px; margin:40px auto; padding:16px;">
+  <h2 style="margin-bottom:12px; color:var(--win95-dark-blue);">用户信息表单</h2>
+  <form>
+    <div style="margin-bottom:10px;">
+      <label for="name" style="display:block; margin-bottom:2px;">姓名：</label>
+      <input type="text" id="name" name="name" class="win95-inset" style="width:100%; padding:4px;">
+    </div>
+    <div style="margin-bottom:10px;">
+      <label for="email" style="display:block; margin-bottom:2px;">邮箱：</label>
+      <input type="email" id="email" name="email" class="win95-inset" style="width:100%; padding:4px;">
+    </div>
+    <div style="margin-bottom:10px;">
+      <label for="gender" style="display:block; margin-bottom:2px;">性别：</label>
+      <select id="gender" name="gender" class="win95-inset" style="width:100%; padding:4px;">
+        <option value="">请选择</option>
+        <option value="male">男</option>
+        <option value="female">女</option>
+        <option value="other">其他</option>
+      </select>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label for="bio" style="display:block; margin-bottom:2px;">简介：</label>
+      <textarea id="bio" name="bio" rows="3" class="win95-inset" style="width:100%; padding:4px;"></textarea>
+    </div>
+    <div style="text-align:right;">
+      <button type="submit" class="win95-button">提交</button>
+      <button type="reset" class="win95-button">重置</button>
+    </div>

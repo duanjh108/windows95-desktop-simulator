@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 95 桌面模拟器</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MS+Sans+Serif:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 桌面背景 -->
+    <div id="desktop">
+        <!-- 桌面图标 -->
+        <div class="desktop-icons">
+            <div class="desktop-icon" data-app="my-computer">
+                <div class="icon-image">💻</div>
+                <div class="icon-label">我的电脑</div>
+            </div>
+            <div class="desktop-icon" data-app="recycle-bin">
+                <div class="icon-image">🗑️</div>
+                <div class="icon-label">回收站</div>
+            </div>
+            <div class="desktop-icon" data-app="network">
+                <div class="icon-image">🌐</div>
+                <div class="icon-label">网络邻居</div>
+            </div>
+            <div class="desktop-icon" data-app="notepad">
+                <div class="icon-image">📝</div>
+                <div class="icon-label">记事本</div>
+            </div>
+            <div class="desktop-icon" data-app="calculator">
+                <div class="icon-image">🧮</div>
+                <div class="icon-label">计算器</div>
+            </div>
+            <div class="desktop-icon" data-app="paint">
+                <div class="icon-image">🎨</div>
+                <div class="icon-label">画图</div>
+            </div>
+        </div>
+
+        <!-- 右键菜单 -->
+        <div id="context-menu" class="context-menu hidden">
+            <div class="menu-item">
+                <span>排列图标</span>
+                <span class="submenu-arrow">▶</span>
+                <div class="submenu">
+                    <div class="menu-item">按名称</div>
+                    <div class="menu-item">按类型</div>
+                    <div class="menu-item">按大小</div>
+                    <div class="menu-item">按日期</div>
+                </div>
+            </div>
+            <div class="menu-separator"></div>
+            <div class="menu-item">刷新</div>
+            <div class="menu-separator"></div>
+            <div class="menu-item">粘贴</div>
+            <div class="menu-item">粘贴快捷方式</div>
+            <div class="menu-separator"></div>
+            <div class="menu-item">新建</div>
+            <div class="menu-separator"></div>
+            <div class="menu-item">属性</div>
+        </div>
+    </div>
+
+    <!-- 任务栏 -->
+    <div id="taskbar">
+        <div id="start-button" class="start-button">
+            <span class="start-icon">🚩</span>
+            <span class="start-text">开始</span>
+        </div>
+        
+        <div id="taskbar-buttons" class="taskbar-buttons"></div>
+        
+        <div id="system-tray" class="system-tray">
+            <div class="tray-icon">🔊</div>
+            <div class="tray-icon">🔋</div>
+            <div id="clock" class="clock"></div>
+        </div>
+    </div>
+
+    <!-- 开始菜单 -->
+    <div id="start-menu" class="start-menu hidden">
+        <div class="start-menu-header">
+            <div class="windows-logo">Windows<span class="logo-95">95</span></div>
+        </div>
+        <div class="start-menu-content">
+            <div class="menu-item" data-app="programs">
+                <span class="menu-icon">📁</span>
+                <span>程序</span>
+                <span class="submenu-arrow">▶</span>
+                <div class="submenu programs-submenu">
+                    <div class="menu-item" data-app="accessories">
+                        <span class="menu-icon">📦</span>
+                        <span>附件</span>
+                        <span class="submenu-arrow">▶</span>
+                        <div class="submenu">
+                            <div class="menu-item" data-app="notepad">
+                                <span class="menu-icon">📝</span>
+                                <span>记事本</span>
+                            </div>
+                            <div class="menu-item" data-app="calculator">
+                                <span class="menu-icon">🧮</span>
+                                <span>计算器</span>
+                            </div>
+                            <div class="menu-item" data-app="paint">
+                                <span class="menu-icon">🎨</span>
+                                <span>画图</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="menu-item" data-app="games">
+                        <span class="menu-icon">🎮</span>
+                        <span>游戏</span>
+                        <span class="submenu-arrow">▶</span>
+                        <div class="submenu">
+                            <div class="menu-item" data-app="minesweeper">
+                                <span class="menu-icon">💣</span>
+                                <span>扫雷</span>
+                            </div>
+                            <div class="menu-item" data-app="solitaire">
+                                <span class="menu-icon">♠️</span>
+                                <span>纸牌</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <span class="menu-icon">📄</span>
+                <span>文档</span>
+            </div>
+            <div class="menu-item">
+                <span class="menu-icon">⚙️</span>
+                <span>设置</span>
+            </div>
+            <div class="menu-item">
+                <span class="menu-icon">🔍</span>
+                <span>查找</span>
+            </div>
+            <div class="menu-item">
+                <span class="menu-icon">❓</span>
+                <span>帮助</span>
+            </div>
+            <div class="menu-item">
+                <span class="menu-icon">▶️</span>
+                <span>运行...</span>
+            </div>
+            <div class="menu-separator"></div>
+            <div class="menu-item" id="shutdown">
+                <span class="menu-icon">🔌</span>
+                <span>关闭系统...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 窗口容器 -->
+    <div id="windows-container"></div>
+
+    <!-- 音频元素 -->
+    <audio id="startup-sound" preload="auto">
+        <source src="sounds/startup.wav" type="audio/wav">
+    </audio>
+    <audio id="click-sound" preload="auto">
+        <source src="sounds/click.wav" type="audio/wav">
+    </audio>
+    <audio id="error-sound" preload="auto">
+        <source src="sounds/error.wav" type="audio/wav">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

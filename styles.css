@@ -1,0 +1,627 @@
+/* Windows 95 桌面模拟器样式 */
+
+/* CSS变量 - Windows 95色彩方案 */
+:root {
+    --win95-gray: #c0c0c0;
+    --win95-light-gray: #dfdfdf;
+    --win95-dark-gray: #808080;
+    --win95-black: #000000;
+    --win95-white: #ffffff;
+    --win95-blue: #0000ff;
+    --win95-dark-blue: #000080;
+    --win95-desktop-teal: #008080;
+    --win95-highlight: #316ac5;
+    --win95-button-face: #c0c0c0;
+    --win95-button-shadow: #808080;
+    --win95-button-dark-shadow: #404040;
+    --win95-button-light: #dfdfdf;
+    --win95-button-highlight: #ffffff;
+}
+
+/* 全局重置和基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    font-family: 'MS Sans Serif', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 11px;
+    overflow: hidden;
+    cursor: default;
+    background: var(--win95-desktop-teal);
+}
+
+/* Windows 95 3D边框效果 */
+.win95-border {
+    border-top: 2px solid var(--win95-button-highlight);
+    border-left: 2px solid var(--win95-button-highlight);
+    border-bottom: 2px solid var(--win95-button-dark-shadow);
+    border-right: 2px solid var(--win95-button-dark-shadow);
+    background: var(--win95-button-face);
+}
+
+.win95-border-inset {
+    border-top: 1px solid var(--win95-button-shadow);
+    border-left: 1px solid var(--win95-button-shadow);
+    border-bottom: 1px solid var(--win95-button-highlight);
+    border-right: 1px solid var(--win95-button-highlight);
+    background: var(--win95-white);
+}
+
+.win95-border-outset {
+    border-top: 1px solid var(--win95-button-highlight);
+    border-left: 1px solid var(--win95-button-highlight);
+    border-bottom: 1px solid var(--win95-button-shadow);
+    border-right: 1px solid var(--win95-button-shadow);
+    background: var(--win95-button-face);
+}
+
+/* 桌面 */
+#desktop {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(45deg, #008080 0%, #004040 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 桌面图标 */
+.desktop-icons {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.desktop-icon {
+    width: 75px;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 5px;
+    border-radius: 2px;
+}
+
+.desktop-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.desktop-icon.selected {
+    background: var(--win95-highlight);
+    border: 1px dotted var(--win95-white);
+}
+
+.desktop-icon .icon-image {
+    font-size: 32px;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.desktop-icon .icon-label {
+    font-size: 11px;
+    color: var(--win95-white);
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    word-wrap: break-word;
+    line-height: 1.2;
+}
+
+/* 任务栏 */
+#taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: var(--win95-button-face);
+    border-top: 1px solid var(--win95-button-highlight);
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* 开始按钮 */
+.start-button {
+    height: 26px;
+    background: var(--win95-button-face);
+    border: 2px outset var(--win95-button-face);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    margin: 2px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.start-button:hover {
+    background: var(--win95-light-gray);
+}
+
+.start-button:active,
+.start-button.active {
+    border: 2px inset var(--win95-button-face);
+}
+
+.start-icon {
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+/* 任务栏按钮区域 */
+.taskbar-buttons {
+    flex: 1;
+    height: 26px;
+    margin: 2px;
+    display: flex;
+    gap: 2px;
+}
+
+.taskbar-button {
+    height: 100%;
+    min-width: 120px;
+    max-width: 200px;
+    background: var(--win95-button-face);
+    border: 1px outset var(--win95-button-face);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    cursor: pointer;
+    font-size: 11px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.taskbar-button:hover {
+    background: var(--win95-light-gray);
+}
+
+.taskbar-button:active,
+.taskbar-button.active {
+    border: 1px inset var(--win95-button-face);
+    background: var(--win95-gray);
+}
+
+.taskbar-button .button-icon {
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+/* 系统托盘 */
+.system-tray {
+    height: 26px;
+    margin: 2px;
+    border: 1px inset var(--win95-button-face);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    gap: 8px;
+    background: var(--win95-button-face);
+}
+
+.tray-icon {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.tray-icon:hover {
+    background: var(--win95-light-gray);
+    padding: 2px;
+    margin: -2px;
+}
+
+.clock {
+    font-size: 11px;
+    font-family: 'MS Sans Serif', monospace;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* 开始菜单 */
+.start-menu {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    width: 200px;
+    background: var(--win95-button-face);
+    border: 2px outset var(--win95-button-face);
+    z-index: 1001;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.start-menu.hidden {
+    display: none;
+}
+
+.start-menu-header {
+    background: linear-gradient(90deg, var(--win95-dark-blue), var(--win95-blue));
+    color: var(--win95-white);
+    padding: 8px;
+    font-weight: bold;
+    border-bottom: 1px solid var(--win95-button-shadow);
+}
+
+.windows-logo {
+    font-size: 12px;
+}
+
+.logo-95 {
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.start-menu-content {
+    padding: 2px;
+}
+
+/* 菜单项 */
+.menu-item {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    cursor: pointer;
+    position: relative;
+    font-size: 11px;
+}
+
+.menu-item:hover {
+    background: var(--win95-highlight);
+    color: var(--win95-white);
+}
+
+.menu-icon {
+    width: 16px;
+    margin-right: 8px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.submenu-arrow {
+    margin-left: auto;
+    font-size: 8px;
+}
+
+.menu-separator {
+    height: 1px;
+    background: var(--win95-button-shadow);
+    margin: 2px 8px;
+    border-bottom: 1px solid var(--win95-button-highlight);
+}
+
+/* 子菜单 */
+.submenu {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 180px;
+    background: var(--win95-button-face);
+    border: 2px outset var(--win95-button-face);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    display: none;
+    z-index: 1002;
+    padding: 2px;
+}
+
+.menu-item:hover .submenu {
+    display: block;
+}
+
+/* 右键菜单 */
+.context-menu {
+    position: fixed;
+    background: var(--win95-button-face);
+    border: 2px outset var(--win95-button-face);
+    min-width: 150px;
+    z-index: 1003;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    padding: 2px;
+}
+
+.context-menu.hidden {
+    display: none;
+}
+
+/* 窗口样式 */
+.window {
+    position: absolute;
+    background: var(--win95-button-face);
+    border: 2px outset var(--win95-button-face);
+    min-width: 200px;
+    min-height: 150px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.window.active {
+    z-index: 200;
+}
+
+.window.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 30px) !important;
+    border: none;
+}
+
+/* 窗口标题栏 */
+.window-titlebar {
+    height: 18px;
+    background: linear-gradient(90deg, var(--win95-dark-blue), var(--win95-blue));
+    color: var(--win95-white);
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    cursor: move;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.window.inactive .window-titlebar {
+    background: var(--win95-gray);
+    color: var(--win95-black);
+}
+
+.window-title {
+    flex: 1;
+    padding: 0 8px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.window-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.window-control {
+    width: 16px;
+    height: 14px;
+    background: var(--win95-button-face);
+    border: 1px outset var(--win95-button-face);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 8px;
+    color: var(--win95-black);
+}
+
+.window-control:hover {
+    background: var(--win95-light-gray);
+}
+
+.window-control:active {
+    border: 1px inset var(--win95-button-face);
+}
+
+/* 窗口内容区域 */
+.window-content {
+    flex: 1;
+    background: var(--win95-white);
+    border: 1px inset var(--win95-button-face);
+    margin: 2px;
+    overflow: auto;
+    padding: 8px;
+}
+
+/* 应用程序特定样式 */
+
+/* 记事本 */
+.notepad-content {
+    padding: 0;
+}
+
+.notepad-menu {
+    height: 20px;
+    background: var(--win95-button-face);
+    border-bottom: 1px solid var(--win95-button-shadow);
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    font-size: 11px;
+}
+
+.notepad-menu-item {
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.notepad-menu-item:hover {
+    background: var(--win95-highlight);
+    color: var(--win95-white);
+}
+
+.notepad-textarea {
+    width: 100%;
+    height: calc(100% - 20px);
+    border: none;
+    outline: none;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 8px;
+    resize: none;
+    background: var(--win95-white);
+}
+
+/* 计算器 */
+.calculator-content {
+    padding: 8px;
+    width: 200px;
+    height: 250px;
+}
+
+.calculator-display {
+    width: 100%;
+    height: 30px;
+    background: var(--win95-white);
+    border: 1px inset var(--win95-button-face);
+    margin-bottom: 8px;
+    text-align: right;
+    padding: 4px 8px;
+    font-family: 'MS Sans Serif', monospace;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.calculator-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    height: calc(100% - 46px);
+}
+
+.calculator-button {
+    background: var(--win95-button-face);
+    border: 2px outset var(--win95-button-face);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.calculator-button:hover {
+    background: var(--win95-light-gray);
+}
+
+.calculator-button:active {
+    border: 2px inset var(--win95-button-face);
+}
+
+/* 画图应用 */
+.paint-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.paint-toolbar {
+    height: 40px;
+    background: var(--win95-button-face);
+    border-bottom: 1px solid var(--win95-button-shadow);
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    gap: 4px;
+}
+
+.paint-tool {
+    width: 32px;
+    height: 32px;
+    background: var(--win95-button-face);
+    border: 1px outset var(--win95-button-face);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.paint-tool:hover {
+    background: var(--win95-light-gray);
+}
+
+.paint-tool.active {
+    border: 1px inset var(--win95-button-face);
+    background: var(--win95-gray);
+}
+
+.paint-canvas {
+    flex: 1;
+    background: var(--win95-white);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .desktop-icons {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .desktop-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .desktop-icon .icon-image {
+        font-size: 24px;
+    }
+    
+    .desktop-icon .icon-label {
+        font-size: 10px;
+    }
+    
+    .start-menu {
+        width: 180px;
+    }
+    
+    .submenu {
+        width: 160px;
+    }
+}
+
+/* 动画效果 */
+.window {
+    transition: all 0.2s ease;
+}
+
+.start-button {
+    transition: all 0.1s ease;
+}
+
+.menu-item {
+    transition: background-color 0.1s ease;
+}
+
+.taskbar-button {
+    transition: all 0.1s ease;
+}
+
+/* 滚动条样式 (WebKit) */
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--win95-button-face);
+    border: 1px inset var(--win95-button-face);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--win95-button-face);
+    border: 1px outset var(--win95-button-face);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--win95-light-gray);
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--win95-button-face);
+}
+
+/* 选择文本样式 */
+::selection {
+    background: var(--win95-highlight);
+    color: var(--win95-white);
+}

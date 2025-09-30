@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 95 桌面模拟器 - 项目展示</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(90deg, #008080, #004040);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .demo-section {
+            margin-bottom: 40px;
+        }
+        .demo-button {
+            display: inline-block;
+            background: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .demo-button:hover {
+            background: #dfdfdf;
+        }
+        .demo-button:active {
+            border: 2px inset #c0c0c0;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .feature-card h3 {
+            color: #008080;
+            margin-top: 0;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            color: green;
+            font-weight: bold;
+        }
+        .tech-stack {
+            background: #e8f4f8;
+            border-left: 4px solid #008080;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .screenshot {
+            max-width: 100%;
+            border: 2px solid #c0c0c0;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .code-block {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖥️ Windows 95 桌面模拟器</h1>
+            <p>高度还原的Windows 95桌面体验Web应用程序</p>
+        </div>
+        
+        <div class="content">
+            <div class="demo-section">
+                <h2>🚀 立即体验</h2>
+                <p>点击下面的按钮启动Windows 95桌面模拟器：</p>
+                <a href="index.html" class="demo-button" target="_blank">🚩 启动 Windows 95</a>
+                <a href="#features" class="demo-button">📋 查看功能</a>
+                <a href="#tech" class="demo-button">⚙️ 技术详情</a>
+            </div>
+
+            <div class="demo-section" id="features">
+                <h2>✨ 主要功能</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>🖥️ 桌面环境</h3>
+                        <ul class="feature-list">
+                            <li>经典绿色渐变背景</li>
+                            <li>桌面图标管理</li>
+                            <li>右键上下文菜单</li>
+                            <li>任务栏和系统托盘</li>
+                            <li>实时时钟显示</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>📋 开始菜单</h3>
+                        <ul class="feature-list">
+                            <li>经典开始按钮</li>
+                            <li>分级菜单结构</li>
+                            <li>程序分类管理</li>
+                            <li>系统功能入口</li>
+                            <li>关机选项</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🪟 窗口管理</h3>
+                        <ul class="feature-list">
+                            <li>3D边框效果</li>
+                            <li>拖拽移动窗口</li>
+                            <li>最小化/最大化</li>
+                            <li>窗口层级管理</li>
+                            <li>任务栏同步</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>📱 应用程序</h3>
+                        <ul class="feature-list">
+                            <li>记事本文本编辑</li>
+                            <li>计算器运算</li>
+                            <li>画图绘制工具</li>
+                            <li>我的电脑浏览</li>
+                            <li>扫雷游戏</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🎵 音效系统</h3>
+                        <ul class="feature-list">
+                            <li>系统启动音</li>
+                            <li>按钮点击音</li>
+                            <li>错误提示音</li>
+                            <li>可配置开关</li>
+                            <li>Web Audio API</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🎨 界面设计</h3>
+                        <ul class="feature-list">
+                            <li>像素级精确还原</li>
+                            <li>经典颜色方案</li>
+                            <li>3D按钮效果</li>
+                            <li>响应式布局</li>
+                            <li>现代浏览器兼容</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section" id="tech">
+                <h2>🔧 技术实现</h2>
+                <div class="tech-stack">
+                    <h3>技术栈</h3>
+                    <ul>
+                        <li><strong>HTML5/CSS3</strong> - 现代Web标准实现经典界面</li>
+                        <li><strong>JavaScript ES6+</strong> - 面向对象的核心逻辑</li>
+                        <li><strong>CSS Grid/Flexbox</strong> - 灵活的布局系统</li>
+                        <li><strong>Web Audio API</strong> - 音效系统支持</li>
+                    </ul>
+                </div>
+
+                <h3>架构特点</h3>
+                <ul>
+                    <li>📦 <strong>模块化设计</strong> - 每个应用程序独立封装</li>
+                    <li>🎯 <strong>事件驱动</strong> - 响应式用户交互</li>
+                    <li>🏗️ <strong>面向对象</strong> - Windows95Desktop主类管理</li>
+                    <li>🔄 <strong>状态管理</strong> - 统一的窗口和应用状态</li>
+                    <li>📱 <strong>响应式设计</strong> - 适配不同屏幕尺寸</li>
+                </ul>
+
+                <h3>项目结构</h3>
+                <div class="code-block">
+📁 Windows95-Desktop-Simulator/
+├── 📄 index.html          # 主HTML文件
+├── 🎨 styles.css          # CSS样式文件  
+├── ⚙️ script.js           # JavaScript逻辑
+├── 📁 sounds/             # 音效文件夹
+│   ├── 🔊 startup.wav     # 启动音效
+│   ├── 🔊 click.wav       # 点击音效
+│   └── 🔊 error.wav       # 错误音效
+└── 📖 README.md           # 项目说明
+                </div>
+
+                <h3>核心类方法</h3>
+                <div class="code-block">
+class Windows95Desktop {
+    // 窗口管理
+    createWindow(title, content, width, height, icon)
+    setActiveWindow(window)
+    minimizeWindow(window)
+    toggleMaximizeWindow(window)
+    closeWindow(window)
+    
+    // 应用程序
+    openNotepad()
+    openCalculator()
+    openPaint()
+    openMyComputer()
+    openMinesweeper()
+    
+    // 系统功能
+    toggleStartMenu()
+    playSound(soundId)
+    updateClock()
+}
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h2>🎮 使用说明</h2>
+                <ol>
+                    <li>点击"启动 Windows 95"按钮打开模拟器</li>
+                    <li>双击桌面图标或通过开始菜单打开应用程序</li>
+                    <li>拖拽窗口标题栏移动窗口位置</li>
+                    <li>点击窗口控制按钮管理窗口状态</li>
+                    <li>右键点击桌面显示上下文菜单</li>
+                    <li>使用 Ctrl+Esc 快捷键打开开始菜单</li>
+                </ol>
+            </div>
+
+            <div class="demo-section">
+                <h2>🌟 开发亮点</h2>
+                <ul>
+                    <li>🎯 <strong>高度还原</strong> - 像素级精确的Windows 95界面</li>
+                    <li>⚡ <strong>现代技术</strong> - 使用现代Web技术实现经典体验</li>
+                    <li>🔧 <strong>功能完整</strong> - 完整的窗口管理和应用程序</li>
+                    <li>📱 <strong>跨平台</strong> - 支持桌面和移动设备</li>
+                    <li>🎵 <strong>沉浸体验</strong> - 音效系统增强真实感</li>
+                    <li>♿ <strong>易于扩展</strong> - 模块化架构便于添加新功能</li>
+                </ul>
+            </div>
+
+            <div class="demo-section">
+                <h2>📈 未来规划</h2>
+                <h4>第二阶段 (计划中)</h4>
+                <ul>
+                    <li>完整的文件管理器功能</li>
+                    <li>更多系统应用程序</li>
+                    <li>个性化设置面板</li>
+                    <li>改进的音效系统</li>
+                </ul>
+                
+                <h4>第三阶段 (未来)</h4>
+                <ul>
+                    <li>网络功能模拟</li>
+                    <li>更多游戏和娱乐应用</li>
+                    <li>高级系统工具</li>
+                    <li>性能优化和增强</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

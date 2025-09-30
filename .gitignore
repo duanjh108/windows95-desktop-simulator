@@ -1,0 +1,75 @@
+# 操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+logs/
+
+# 依赖目录（如果将来添加构建工具）
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 编辑器和IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 缓存文件
+.cache/
+.parcel-cache/
+
+# 构建输出（如果将来添加构建流程）
+dist/
+build/
+out/
+
+# 环境配置文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 音效文件（由于版权原因）
+sounds/*.wav
+sounds/*.mp3
+sounds/*.ogg
+!sounds/README.md
+
+# 截图和媒体文件的草稿
+screenshots/drafts/
+*.psd
+*.sketch
+
+# 测试覆盖率报告
+coverage/
+*.lcov
+
+# 打包文件
+*.zip
+*.tar.gz
+*.rar
+
+# 备份文件
+*.bak
+*.backup
+
+# 本地配置文件
+local.config.js
