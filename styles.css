@@ -461,28 +461,96 @@ body {
 /* 计算器 */
 .calculator-content {
     padding: 8px;
-    width: 200px;
-    height: 250px;
+    width: 240px;
+    height: 320px;
+    background: var(--win95-button-face);
+}
+
+.calculator-menu {
+    height: 18px;
+    background: var(--win95-button-face);
+    border-bottom: 1px solid var(--win95-button-shadow);
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.calculator-menu-item {
+    padding: 2px 8px;
+    cursor: pointer;
+    height: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.calculator-menu-item:hover {
+    background: var(--win95-highlight);
+    color: var(--win95-white);
+}
+
+.calculator-display-container {
+    background: var(--win95-white);
+    border: 1px inset var(--win95-button-face);
+    margin-bottom: 8px;
+    padding: 4px;
 }
 
 .calculator-display {
     width: 100%;
-    height: 30px;
+    height: 24px;
     background: var(--win95-white);
-    border: 1px inset var(--win95-button-face);
-    margin-bottom: 8px;
+    border: none;
+    outline: none;
     text-align: right;
     padding: 4px 8px;
     font-family: 'MS Sans Serif', monospace;
     font-size: 14px;
+    font-weight: bold;
     overflow: hidden;
+}
+
+.calculator-mode-tabs {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.calculator-tab {
+    flex: 1;
+    height: 20px;
+    background: var(--win95-button-face);
+    border: 1px outset var(--win95-button-face);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    margin-right: 2px;
+}
+
+.calculator-tab:last-child {
+    margin-right: 0;
+}
+
+.calculator-tab.active {
+    border: 1px inset var(--win95-button-face);
+    background: var(--win95-gray);
+}
+
+.calculator-tab:hover:not(.active) {
+    background: var(--win95-light-gray);
 }
 
 .calculator-buttons {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    height: calc(100% - 46px);
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+    height: calc(100% - 100px);
+}
+
+.calculator-buttons.scientific {
+    grid-template-columns: repeat(6, 1fr);
 }
 
 .calculator-button {
@@ -492,8 +560,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
+    color: var(--win95-black);
+    min-height: 24px;
 }
 
 .calculator-button:hover {
@@ -502,6 +572,59 @@ body {
 
 .calculator-button:active {
     border: 2px inset var(--win95-button-face);
+}
+
+.calculator-button.operator {
+    background: var(--win95-button-face);
+    color: var(--win95-black);
+}
+
+.calculator-button.number {
+    background: var(--win95-white);
+    border: 2px outset var(--win95-white);
+}
+
+.calculator-button.number:hover {
+    background: #f0f0f0;
+}
+
+.calculator-button.memory {
+    background: var(--win95-button-face);
+    color: var(--win95-dark-blue);
+    font-size: 10px;
+}
+
+.calculator-button.memory:hover {
+    background: var(--win95-light-gray);
+}
+
+.calculator-button.memory.active {
+    background: var(--win95-highlight);
+    color: var(--win95-white);
+}
+
+.calculator-button.equals {
+    background: var(--win95-highlight);
+    color: var(--win95-white);
+}
+
+.calculator-button.equals:hover {
+    background: #4169E1;
+}
+
+.calculator-button.scientific-func {
+    background: var(--win95-button-face);
+    color: var(--win95-dark-blue);
+    font-size: 9px;
+}
+
+.calculator-memory-indicator {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    font-size: 10px;
+    color: var(--win95-dark-blue);
+    font-weight: bold;
 }
 
 /* 画图应用 */
