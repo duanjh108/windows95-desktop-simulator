@@ -190,6 +190,9 @@ class Windows95Desktop {
             case 'minesweeper':
                 this.openMinesweeper();
                 break;
+            case 'cps-tester':
+                this.openCPSTester();
+                break;
             default:
                 this.showNotImplementedDialog(appName);
         }
@@ -1041,6 +1044,212 @@ class Windows95Desktop {
         `;
         
         this.createWindow('计算器帮助', content, 320, 380, '❓');
+    }
+
+    openCPSTester() {
+        const content = `
+            <div style="padding: 20px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; height: 100%; overflow: hidden;">
+                <div style="margin-bottom: 20px;">
+                    <h2 style="color: #00ffff; text-shadow: 0 0 10px #00ffff; margin-bottom: 10px;">⚡ CPS 测试器</h2>
+                    <p style="color: #ffffff; opacity: 0.9;">点击速度挑战 - Clicks Per Second</p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                        <div style="color: #00ffff; font-size: 24px; margin-bottom: 5px;" id="cps-display">0.0</div>
+                        <div style="color: #ffffff; font-size: 12px;">当前 CPS</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px;">
+                            <div style="color: #ff00ff; font-size: 18px;" id="click-count">0</div>
+                            <div style="color: #ffffff; font-size: 10px;">点击次数</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px;">
+                            <div style="color: #ffff00; font-size: 18px;" id="time-left">10</div>
+                            <div style="color: #ffffff; font-size: 10px;">剩余时间</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div style="color: #00ffff; font-size: 12px; margin-bottom: 8px;">测试时长</div>
+                    <div style="display: flex; gap: 5px; justify-content: center;">
+                        <button class="cps-duration-btn" data-duration="5" style="background: #667eea; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 11px;">5s</button>
+                        <button class="cps-duration-btn active" data-duration="10" style="background: #00ffff; color: black; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 11px;">10s</button>
+                        <button class="cps-duration-btn" data-duration="20" style="background: #667eea; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 11px;">20s</button>
+                        <button class="cps-duration-btn" data-duration="30" style="background: #667eea; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 11px;">30s</button>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <button id="cps-start-btn" style="background: linear-gradient(45deg, #ff00ff, #00ffff); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;">
+                        开始测试
+                    </button>
+                </div>
+                
+                <div id="cps-level" style="margin-bottom: 15px;">
+                    <span style="font-size: 16px;">🌱</span>
+                    <span style="color: #999999; font-weight: bold; margin-left: 5px;">新手</span>
+                </div>
+                
+                <div id="cps-status" style="color: #ffffff; font-size: 12px; opacity: 0.8;">
+                    点击开始测试按钮开始
+                </div>
+                
+                <div style="margin-top: 15px; font-size: 10px; color: #ffffff; opacity: 0.6;">
+                    💡 提示：开始后疯狂点击测试区域获得高分！
+                </div>
+            </div>
+        `;
+        
+        const window = this.createWindow('CPS测试器', content, 320, 450, '⚡');
+        this.setupCPSTester(window);
+    }
+
+    setupCPSTester(window) {
+        const cpsDisplay = window.querySelector('#cps-display');
+        const clickCountDisplay = window.querySelector('#click-count');
+        const timeLeftDisplay = window.querySelector('#time-left');
+        const startBtn = window.querySelector('#cps-start-btn');
+        const levelDisplay = window.querySelector('#cps-level');
+        const statusDisplay = window.querySelector('#cps-status');
+        const durationBtns = window.querySelectorAll('.cps-duration-btn');
+        
+        let gameState = 'idle'; // idle, testing, finished
+        let duration = 10;
+        let timeLeft = 0;
+        let clickCount = 0;
+        let currentCPS = 0;
+        let startTime = 0;
+        let gameInterval = null;
+        
+        const getLevelInfo = (cps) => {
+            if (cps < 4) return { name: '新手', color: '#999999', icon: '🌱' };
+            if (cps < 6) return { name: '普通', color: '#4CAF50', icon: '👍' };
+            if (cps < 8) return { name: '熟练', color: '#2196F3', icon: '💪' };
+            if (cps < 10) return { name: '高手', color: '#FF9800', icon: '🔥' };
+            if (cps < 12) return { name: '专业', color: '#E91E63', icon: '⚡' };
+            return { name: '超神', color: '#9C27B0', icon: '👑' };
+        };
+        
+        const updateDisplay = () => {
+            cpsDisplay.textContent = currentCPS.toFixed(1);
+            clickCountDisplay.textContent = clickCount;
+            timeLeftDisplay.textContent = gameState === 'testing' ? timeLeft.toFixed(1) : duration;
+            
+            const levelInfo = getLevelInfo(currentCPS);
+            levelDisplay.innerHTML = `
+                <span style="font-size: 16px;">${levelInfo.icon}</span>
+                <span style="color: ${levelInfo.color}; font-weight: bold; margin-left: 5px;">${levelInfo.name}</span>
+            `;
+        };
+        
+        const startTest = () => {
+            if (gameState !== 'idle') return;
+            
+            gameState = 'testing';
+            timeLeft = duration;
+            clickCount = 0;
+            currentCPS = 0;
+            startTime = Date.now();
+            
+            startBtn.textContent = '测试中...';
+            startBtn.disabled = true;
+            statusDisplay.textContent = '疯狂点击！';
+            
+            gameInterval = setInterval(() => {
+                const elapsed = (Date.now() - startTime) / 1000;
+                timeLeft = Math.max(0, duration - elapsed);
+                
+                if (timeLeft <= 0) {
+                    endTest();
+                } else {
+                    updateDisplay();
+                }
+            }, 50);
+            
+            updateDisplay();
+        };
+        
+        const endTest = () => {
+            if (gameInterval) {
+                clearInterval(gameInterval);
+                gameInterval = null;
+            }
+            
+            gameState = 'finished';
+            const finalTime = (Date.now() - startTime) / 1000;
+            currentCPS = clickCount / finalTime;
+            
+            startBtn.textContent = '重新测试';
+            startBtn.disabled = false;
+            statusDisplay.textContent = `测试完成！最终成绩: ${currentCPS.toFixed(1)} CPS`;
+            
+            updateDisplay();
+            
+            // 重置状态
+            setTimeout(() => {
+                gameState = 'idle';
+                startBtn.textContent = '开始测试';
+                statusDisplay.textContent = '点击开始测试按钮开始';
+            }, 3000);
+        };
+        
+        const handleClick = (e) => {
+            if (gameState === 'testing') {
+                clickCount++;
+                const elapsed = (Date.now() - startTime) / 1000;
+                currentCPS = clickCount / elapsed;
+                updateDisplay();
+                
+                // 简单的点击效果
+                e.target.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    e.target.style.transform = 'scale(1)';
+                }, 100);
+            }
+        };
+        
+        // 事件监听
+        startBtn.addEventListener('click', startTest);
+        
+        // 点击区域设置
+        const contentArea = window.querySelector('.window-content');
+        contentArea.addEventListener('click', handleClick);
+        
+        // 时长选择
+        durationBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (gameState !== 'idle') return;
+                
+                durationBtns.forEach(b => {
+                    b.style.background = '#667eea';
+                    b.style.color = 'white';
+                    b.classList.remove('active');
+                });
+                
+                btn.style.background = '#00ffff';
+                btn.style.color = 'black';
+                btn.classList.add('active');
+                
+                duration = parseInt(btn.getAttribute('data-duration'));
+                updateDisplay();
+            });
+        });
+        
+        // 窗口关闭清理
+        const closeBtn = window.querySelector('[data-action="close"]');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                if (gameInterval) {
+                    clearInterval(gameInterval);
+                }
+            });
+        }
+        
+        // 初始化显示
+        updateDisplay();
     }
 
     openPaint() {

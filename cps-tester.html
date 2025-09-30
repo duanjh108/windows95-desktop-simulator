@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPS 点击速度测试器</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            font-family: 'Orbitron', monospace;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .neon-glow {
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff;
+        }
+        
+        .cyber-border {
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff) 1;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.5),
+                inset 0 0 20px rgba(255, 0, 255, 0.1);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 255, 255, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+        }
+        
+        .data-display {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .history-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: #00ffff;
+            transform: translateX(5px);
+        }
+        
+        .history-item.latest {
+            border-left-color: #ffff00;
+            background: rgba(255, 255, 0, 0.1);
+        }
+        
+        .countdown-circle {
+            background: conic-gradient(from 0deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+            animation: rotate 2s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .level-badge {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: 900;
+        }
+        
+        .click-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 0%, transparent 70%);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00ffff;
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .glow-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            box-shadow: 0 4px 15px 0 rgba(116, 75, 162, 0.75);
+            transition: all 0.3s ease;
+        }
+        
+        .glow-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(116, 75, 162, 0.9);
+        }
+        
+        .stats-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            border-color: rgba(0, 255, 255, 0.5);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // 等级评价系统
+        const getLevelInfo = (cps) => {
+            if (cps < 4) return { name: '新手', color: '#999999', icon: '🌱' };
+            if (cps < 6) return { name: '普通', color: '#4CAF50', icon: '👍' };
+            if (cps < 8) return { name: '熟练', color: '#2196F3', icon: '💪' };
+            if (cps < 10) return { name: '高手', color: '#FF9800', icon: '🔥' };
+            if (cps < 12) return { name: '专业', color: '#E91E63', icon: '⚡' };
+            return { name: '超神', color: '#9C27B0', icon: '👑' };
+        };
+
+        // 浮动粒子组件
+        const FloatingParticles = () => {
+            const particles = Array.from({ length: 20 }, (_, i) => (
+                <div
+                    key={i}
+                    className="particle"
+                    style={{
+                        left: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 6}s`,
+                        animationDuration: `${4 + Math.random() * 4}s`
+                    }}
+                />
+            ));
+
+            return <div className="floating-particles">{particles}</div>;
+        };
+
+        // 点击涟漪效果组件
+        const ClickRipple = ({ x, y, id, onComplete }) => {
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    onComplete(id);
+                }, 600);
+                return () => clearTimeout(timer);
+            }, [id, onComplete]);
+
+            return (
+                <div
+                    className="click-ripple"
+                    style={{
+                        left: x - 50,
+                        top: y - 50,
+                        width: 100,
+                        height: 100
+                    }}
+                />
+            );
+        };
+
+        // 主要CPS测试器组件
+        const CPSTester = () => {
+            // 状态管理
+            const [gameState, setGameState] = useState('idle'); // idle, testing, finished, cooldown
+            const [duration, setDuration] = useState(10);
+            const [timeLeft, setTimeLeft] = useState(0);
+            const [clickCount, setClickCount] = useState(0);
+            const [currentCPS, setCurrentCPS] = useState(0);
+            const [finalCPS, setFinalCPS] = useState(0);
+            const [bestCPS, setBestCPS] = useState(0);
+            const [history, setHistory] = useState([]);
+            const [cooldownTime, setCooldownTime] = useState(0);
+            const [ripples, setRipples] = useState([]);
+
+            // 引用
+            const startTimeRef = useRef(0);
+            const intervalRef = useRef(null);
+            const cooldownRef = useRef(null);
+            const rippleIdRef = useRef(0);
+
+            // 从localStorage加载历史记录
+            useEffect(() => {
+                const savedHistory = localStorage.getItem('cps-history');
+                const savedBest = localStorage.getItem('cps-best');
+                
+                if (savedHistory) {
+                    setHistory(JSON.parse(savedHistory));
+                }
+                if (savedBest) {
+                    setBestCPS(parseFloat(savedBest));
+                }
+            }, []);
+
+            // 保存历史记录到localStorage
+            const saveToStorage = (newHistory, newBest) => {
+                localStorage.setItem('cps-history', JSON.stringify(newHistory));
+                if (newBest > bestCPS) {
+                    localStorage.setItem('cps-best', newBest.toString());
+                }
+            };
+
+            // 添加点击涟漪效果
+            const addRipple = (event) => {
+                const rect = document.body.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                const id = rippleIdRef.current++;
+                
+                setRipples(prev => [...prev, { id, x, y }]);
+            };
+
+            // 移除涟漪效果
+            const removeRipple = (id) => {
+                setRipples(prev => prev.filter(ripple => ripple.id !== id));
+            };
+
+            // 开始测试
+            const startTest = () => {
+                if (gameState !== 'idle') return;
+                
+                setGameState('testing');
+                setTimeLeft(duration);
+                setClickCount(0);
+                setCurrentCPS(0);
+                startTimeRef.current = Date.now();
+
+                // 倒计时
+                intervalRef.current = setInterval(() => {
+                    const elapsed = (Date.now() - startTimeRef.current) / 1000;
+                    const remaining = Math.max(0, duration - elapsed);
+                    
+                    setTimeLeft(remaining);
+                    
+                    if (remaining <= 0) {
+                        endTest();
+                    }
+                }, 16); // 60fps更新
+            };
+
+            // 结束测试
+            const endTest = () => {
+                if (intervalRef.current) {
+                    clearInterval(intervalRef.current);
+                    intervalRef.current = null;
+                }
+
+                const actualDuration = (Date.now() - startTimeRef.current) / 1000;
+                const finalCPSValue = clickCount / actualDuration;
+                
+                setFinalCPS(finalCPSValue);
+                setCurrentCPS(finalCPSValue);
+                setGameState('finished');
+
+                // 添加到历史记录
+                const newRecord = {
+                    timestamp: Date.now(),
+                    duration: duration,
+                    clicks: clickCount,
+                    cps: finalCPSValue,
+                    level: getLevelInfo(finalCPSValue).name
+                };
+
+                const newHistory = [newRecord, ...history].slice(0, 20); // 只保留最近20条
+                setHistory(newHistory);
+
+                // 更新最佳成绩
+                const newBest = Math.max(bestCPS, finalCPSValue);
+                setBestCPS(newBest);
+
+                // 保存到localStorage
+                saveToStorage(newHistory, newBest);
+
+                // 开始冷却时间
+                setCooldownTime(5);
+                cooldownRef.current = setInterval(() => {
+                    setCooldownTime(prev => {
+                        if (prev <= 1) {
+                            clearInterval(cooldownRef.current);
+                            setGameState('idle');
+                            return 0;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
+            };
+
+            // 处理点击
+            const handleClick = (event) => {
+                if (gameState === 'testing') {
+                    setClickCount(prev => {
+                        const newCount = prev + 1;
+                        const elapsed = (Date.now() - startTimeRef.current) / 1000;
+                        const newCPS = newCount / elapsed;
+                        setCurrentCPS(newCPS);
+                        return newCount;
+                    });
+                    addRipple(event);
+                }
+            };
+
+            // 键盘事件处理
+            useEffect(() => {
+                const handleKeyPress = (event) => {
+                    if (event.code === 'Space') {
+                        event.preventDefault();
+                        
+                        if (gameState === 'idle') {
+                            startTest();
+                        } else if (gameState === 'testing') {
+                            // 创建模拟鼠标事件用于涟漪效果
+                            const fakeEvent = {
+                                clientX: window.innerWidth / 2 + (Math.random() - 0.5) * 200,
+                                clientY: window.innerHeight / 2 + (Math.random() - 0.5) * 200
+                            };
+                            handleClick(fakeEvent);
+                        }
+                    }
+
+                    // 数字键选择时长
+                    if (gameState === 'idle') {
+                        if (event.key === '1') setDuration(5);
+                        if (event.key === '2') setDuration(10);
+                        if (event.key === '3') setDuration(20);
+                        if (event.key === '4') setDuration(30);
+                    }
+                };
+
+                window.addEventListener('keydown', handleKeyPress);
+                return () => window.removeEventListener('keydown', handleKeyPress);
+            }, [gameState, duration]);
+
+            // 清理定时器
+            useEffect(() => {
+                return () => {
+                    if (intervalRef.current) clearInterval(intervalRef.current);
+                    if (cooldownRef.current) clearInterval(cooldownRef.current);
+                };
+            }, []);
+
+            // 获取状态文本
+            const getStatusText = () => {
+                switch (gameState) {
+                    case 'idle':
+                        return '按空格键开始测试';
+                    case 'testing':
+                        return '疯狂按空格键！';
+                    case 'finished':
+                        return '测试完成！';
+                    case 'cooldown':
+                        return `冷却中... ${cooldownTime}s`;
+                    default:
+                        return '';
+                }
+            };
+
+            const levelInfo = getLevelInfo(gameState === 'finished' ? finalCPS : currentCPS);
+
+            return (
+                <div className="gradient-bg min-h-screen relative overflow-hidden">
+                    <FloatingParticles />
+                    
+                    {/* 涟漪效果 */}
+                    {ripples.map(ripple => (
+                        <ClickRipple
+                            key={ripple.id}
+                            x={ripple.x}
+                            y={ripple.y}
+                            id={ripple.id}
+                            onComplete={removeRipple}
+                        />
+                    ))}
+
+                    <div className="container mx-auto px-4 py-8 h-screen flex flex-col">
+                        {/* 标题 */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-6xl font-black text-white neon-glow mb-4">
+                                CPS 测试器
+                            </h1>
+                            <p className="text-xl text-cyan-300">
+                                Clicks Per Second - 点击速度挑战
+                            </p>
+                        </div>
+
+                        <div className="flex-1 flex gap-8">
+                            {/* 主测试区域 */}
+                            <div className="flex-1 flex flex-col">
+                                {/* 时长选择 */}
+                                <div className="data-display rounded-2xl p-6 mb-6">
+                                    <h3 className="text-white text-xl mb-4 text-center">
+                                        测试时长 (按数字键 1-4 快速选择)
+                                    </h3>
+                                    <div className="flex gap-4 justify-center">
+                                        {[5, 10, 20, 30].map((time, index) => (
+                                            <button
+                                                key={time}
+                                                className={`px-6 py-3 rounded-lg font-bold transition-all duration-300 ${
+                                                    duration === time
+                                                        ? 'cyber-border text-cyan-300 pulse-animation'
+                                                        : 'glow-button text-white hover:scale-105'
+                                                } ${gameState !== 'idle' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                onClick={() => gameState === 'idle' && setDuration(time)}
+                                                disabled={gameState !== 'idle'}
+                                            >
+                                                {index + 1}. {time}s
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* 主显示区域 */}
+                                <div className="data-display rounded-3xl p-8 mb-6 text-center flex-1 flex flex-col justify-center">
+                                    {/* 倒计时显示 */}
+                                    {gameState === 'testing' && (
+                                        <div className="mb-8">
+                                            <div className="countdown-circle w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                                <div className="bg-black w-28 h-28 rounded-full flex items-center justify-center">
+                                                    <span className="text-4xl font-black text-white">
+                                                        {Math.ceil(timeLeft)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* 主要数据显示 */}
+                                    <div className="space-y-6">
+                                        <div>
+                                            <div className="text-cyan-300 text-2xl mb-2">当前 CPS</div>
+                                            <div className="text-8xl font-black text-white neon-glow">
+                                                {currentCPS.toFixed(1)}
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-8">
+                                            <div>
+                                                <div className="text-purple-300 text-xl mb-2">点击次数</div>
+                                                <div className="text-4xl font-bold text-white">
+                                                    {clickCount}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="text-pink-300 text-xl mb-2">剩余时间</div>
+                                                <div className="text-4xl font-bold text-white">
+                                                    {gameState === 'testing' ? `${timeLeft.toFixed(1)}s` : `${duration}s`}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* 等级显示 */}
+                                        <div className="mt-8">
+                                            <div className="flex items-center justify-center space-x-4">
+                                                <span className="text-4xl">{levelInfo.icon}</span>
+                                                <span className="level-badge text-3xl font-black">
+                                                    {levelInfo.name}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* 状态文本 */}
+                                        <div className="mt-8">
+                                            <div className={`text-2xl font-bold ${
+                                                gameState === 'testing' ? 'text-yellow-300 pulse-animation' : 'text-cyan-300'
+                                            }`}>
+                                                {getStatusText()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 最佳成绩显示 */}
+                                <div className="stats-card p-6 text-center">
+                                    <div className="text-yellow-300 text-lg mb-2">个人最佳</div>
+                                    <div className="text-3xl font-black text-white neon-glow">
+                                        {bestCPS.toFixed(1)} CPS
+                                    </div>
+                                    <div className="text-sm text-gray-300 mt-1">
+                                        {getLevelInfo(bestCPS).icon} {getLevelInfo(bestCPS).name}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 历史记录侧栏 */}
+                            <div className="w-80">
+                                <div className="data-display rounded-2xl p-6 h-full">
+                                    <h3 className="text-white text-xl mb-4 text-center neon-glow">
+                                        测试历史
+                                    </h3>
+                                    <div className="space-y-3 overflow-y-auto max-h-96">
+                                        {history.length === 0 ? (
+                                            <div className="text-gray-400 text-center py-8">
+                                                还没有测试记录
+                                            </div>
+                                        ) : (
+                                            history.map((record, index) => (
+                                                <div
+                                                    key={record.timestamp}
+                                                    className={`history-item p-4 rounded-lg ${
+                                                        index === 0 ? 'latest' : ''
+                                                    }`}
+                                                >
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <div className="text-cyan-300 font-bold text-lg">
+                                                            {record.cps.toFixed(1)} CPS
+                                                        </div>
+                                                        <div className="text-xs text-gray-300">
+                                                            {new Date(record.timestamp).toLocaleTimeString()}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex justify-between items-center text-sm">
+                                                        <span className="text-white">
+                                                            {record.clicks} 次点击
+                                                        </span>
+                                                        <span className="text-purple-300">
+                                                            {record.duration}s
+                                                        </span>
+                                                    </div>
+                                                    <div className="mt-2 flex items-center space-x-2">
+                                                        <span>{getLevelInfo(record.cps).icon}</span>
+                                                        <span 
+                                                            className="text-sm font-bold"
+                                                            style={{ color: getLevelInfo(record.cps).color }}
+                                                        >
+                                                            {record.level}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    
+                                    {/* 清除历史按钮 */}
+                                    {history.length > 0 && (
+                                        <button
+                                            className="w-full mt-4 glow-button text-white py-2 px-4 rounded-lg text-sm"
+                                            onClick={() => {
+                                                setHistory([]);
+                                                localStorage.removeItem('cps-history');
+                                            }}
+                                        >
+                                            清除历史
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 操作提示 */}
+                        <div className="text-center mt-6">
+                            <div className="text-gray-300 text-sm">
+                                🎮 按空格键开始/点击 | 🔢 数字键1-4选择时长 | ⚡ 疯狂按空格键获得高分
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // 渲染应用
+        ReactDOM.render(<CPSTester />, document.getElementById('root'));
+    </script>
+</body>
+</html>
