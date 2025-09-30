@@ -1,0 +1,98 @@
+{
+  "name": "windows95-desktop-simulator",
+  "version": "1.0.0",
+  "description": "🖥️ A highly accurate Windows 95 desktop experience recreated with modern web technologies",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000 || php -S localhost:8000 || echo 'Please use a local web server to run this project'",
+    "dev": "python -m http.server 8080",
+    "serve": "python -m http.server 3000",
+    "lint": "echo 'No linting configured yet'",
+    "test": "echo 'No tests configured yet'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/windows95-desktop-simulator.git"
+  },
+  "keywords": [
+    "windows95",
+    "desktop",
+    "simulator",
+    "retro",
+    "nostalgia",
+    "operating-system",
+    "web-app",
+    "javascript",
+    "css3",
+    "html5",
+    "gui",
+    "vintage",
+    "90s",
+    "microsoft",
+    "ui-recreation"
+  ],
+  "author": {
+    "name": "Windows95 Desktop Simulator Contributors",
+    "email": "simulator@example.com",
+    "url": "https://github.com/your-username/windows95-desktop-simulator"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/your-username/windows95-desktop-simulator/issues"
+  },
+  "homepage": "https://github.com/your-username/windows95-desktop-simulator#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "browserslist": [
+    "Chrome >= 80",
+    "Firefox >= 75",
+    "Safari >= 13",
+    "Edge >= 80"
+  ],
+  "devDependencies": {},
+  "dependencies": {},
+  "files": [
+    "index.html",
+    "demo.html",
+    "styles.css",
+    "script.js",
+    "sounds/README.md",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md"
+  ],
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/your-username"
+  },
+  "config": {
+    "port": 8000,
+    "host": "localhost"
+  },
+  "features": [
+    "Desktop Environment",
+    "Window Management",
+    "Start Menu System",
+    "Built-in Applications",
+    "Sound Effects",
+    "Responsive Design"
+  ],
+  "applications": [
+    "Notepad",
+    "Calculator", 
+    "Paint",
+    "My Computer",
+    "Recycle Bin",
+    "Minesweeper"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3", 
+    "JavaScript ES6+",
+    "Web Audio API",
+    "CSS Grid",
+    "Flexbox"
+  ]
+}
